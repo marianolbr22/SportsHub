@@ -35,4 +35,4 @@ app.include_router(partidos_router, prefix="")
 # Endpoint raíz opcional
 @app.get("/")
 def root():
-    return {"mensaje": "API de SportsHub activa"}
+    return {"mensaje": "API de SportsHub activa, revisado uno"}
