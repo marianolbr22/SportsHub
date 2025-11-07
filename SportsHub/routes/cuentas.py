@@ -9,6 +9,7 @@ from controladores.usuario_controlador import UsuarioControlador
 from controladores.admin_controlador import AdminControlador
 from controladores.director_controlador import DirectorControlador
 from controladores.arbitro_controlador import ArbitroControlador
+from aspectos.logging import log_action  # <--- Importamos el decorador
 
 router = APIRouter()
 
@@ -39,11 +40,13 @@ class LigaAdminRequest(BaseModel):
 
 # --------- Registro solo para usuario y admin ---------
 @router.post("/registrar/usuario")
+@log_action(action_name="REGISTRAR_USUARIO")
 async def registrar_usuario(usuario: Usuario):
     id_nuevo = await usuario_controlador.registrar_usuario(usuario)
     return {"id": id_nuevo}
 
 @router.post("/registrar/admin")
+@log_action(action_name="REGISTRAR_ADMIN")
 async def registrar_admin(admin: Admin):
     id_nuevo = await admin_controlador.registrar_admin(admin)
     return {"id": id_nuevo}
@@ -97,6 +100,7 @@ async def get_arbitro(id: str):
 
 # --------- Cambiar contraseña ---------
 @router.post("/cambiar_contrasena/usuario")
+@log_action(action_name="CAMBIAR_CONTRASENA_USUARIO")
 async def cambiar_contrasena_usuario(request: CambioContrasenaRequest):
     resultado = await usuario_controlador.cambiar_contrasena(request.id, request.actual, request.nueva1, request.nueva2)
     if "correctamente" not in resultado:
@@ -104,6 +108,7 @@ async def cambiar_contrasena_usuario(request: CambioContrasenaRequest):
     return {"detalle": resultado}
 
 @router.post("/cambiar_contrasena/admin")
+@log_action(action_name="CAMBIAR_CONTRASENA_ADMIN")
 async def cambiar_contrasena_admin(request: CambioContrasenaRequest):
     resultado = await admin_controlador.cambiar_contrasena(request.id, request.actual, request.nueva1, request.nueva2)
     if "correctamente" not in resultado:
@@ -111,6 +116,7 @@ async def cambiar_contrasena_admin(request: CambioContrasenaRequest):
     return {"detalle": resultado}
 
 @router.post("/cambiar_contrasena/director")
+@log_action(action_name="CAMBIAR_CONTRASENA_DIRECTOR")
 async def cambiar_contrasena_director(request: CambioContrasenaRequest):
     resultado = await director_controlador.cambiar_contrasena(request.id, request.actual, request.nueva1, request.nueva2)
     if "correctamente" not in resultado:
@@ -118,6 +124,7 @@ async def cambiar_contrasena_director(request: CambioContrasenaRequest):
     return {"detalle": resultado}
 
 @router.post("/cambiar_contrasena/arbitro")
+@log_action(action_name="CAMBIAR_CONTRASENA_ARBITRO")
 async def cambiar_contrasena_arbitro(request: CambioContrasenaRequest):
     resultado = await arbitro_controlador.cambiar_contrasena(request.id, request.actual, request.nueva1, request.nueva2)
     if "correctamente" not in resultado:
@@ -126,6 +133,7 @@ async def cambiar_contrasena_arbitro(request: CambioContrasenaRequest):
 
 # --------- Favoritos ---------
 @router.post("/favorito/usuario/agregar")
+@log_action(action_name="AGREGAR_FAVORITO")
 async def agregar_favorito_usuario(request: FavoritoRequest):
     ok = await usuario_controlador.agregar_favorito(request.id_usuario, request.tipo, request.id_fav)
     if not ok:
@@ -133,6 +141,7 @@ async def agregar_favorito_usuario(request: FavoritoRequest):
     return {"detalle": "Favorito agregado"}
 
 @router.post("/favorito/usuario/eliminar")
+@log_action(action_name="ELIMINAR_FAVORITO")
 async def eliminar_favorito_usuario(request: FavoritoRequest):
     ok = await usuario_controlador.eliminar_favorito(request.id_usuario, request.tipo, request.id_fav)
     if not ok:
@@ -147,6 +156,7 @@ async def agregar_liga_admin(request: LigaAdminRequest):
     return {"detalle": "Liga agregada correctamente"}
 
 @router.delete("/arbitro/{id}")
+@log_action(action_name="ELIMINAR_ARBITRO")
 async def eliminar_arbitro(id: str):
     ok = await arbitro_controlador.eliminar_arbitro(id)
     if not ok:
@@ -154,6 +164,7 @@ async def eliminar_arbitro(id: str):
     return {"detalle": "Arbitro eliminado correctamente"}
 
 @router.delete("/director/{id}")
+@log_action(action_name="ELIMINAR_DIRECTOR")
 async def eliminar_director(id: str):
     ok = await director_controlador.eliminar_director(id)
     if not ok:

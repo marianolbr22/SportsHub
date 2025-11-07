@@ -1,6 +1,6 @@
 from datetime import datetime, date
 from pydantic import BaseModel, Field, EmailStr
-from typing import Optional, Dict, Union, List, Literal
+from typing import Optional, Dict, Union, List, Literal, Any
 
 # Horario (embebido en partidos y ligas)
 class Horario(BaseModel):
@@ -25,7 +25,7 @@ class Partido(BaseModel):
     resultado: Optional[Dict[str, int]]
     horario: Horario
     notas: Optional[List[str]]
-    eventos: Optional[Dict[int, List[str]]]
+    eventos: Optional[Dict[str, List[str]]]
 
 # Liga (colección: ligas)
 class Liga(BaseModel):
@@ -106,3 +106,17 @@ class Director(Usuario):
     equipoFav: Optional[List[str]] = []
     ligasFav: Optional[List[str]] = []
     telefono: str
+
+class Novedad(BaseModel):
+    id: Optional[str] = Field(default=None, alias="_id")
+    fecha: datetime = Field(default_factory=datetime.utcnow)
+    tipo: str  # ej: "resultado_actualizado", "partido_creado"
+    liga_id: Optional[str] = None
+    equipos_ids: Optional[List[str]] = []
+    data: Dict[str, Any] # Payload con los detalles del evento
+
+class LogEntry(BaseModel):
+    id: Optional[str] = Field(default=None, alias="_id")
+    timestamp: datetime = Field(default_factory=datetime.now)
+    action: str  # Ej: "CREAR_EQUIPO", "ELIMINAR_PARTIDO"
+    details: Optional[Dict[str, Union[str, int, dict, list]]] = None # Detalles de la solicitud

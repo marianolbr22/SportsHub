@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from modelos.reglas_modelo import ReglasModelo
 from controladores.reglas_controlador import ReglasControlador
+# No se necesita importar 'log_action' aquí
 
 router = APIRouter()
 reglas_controlador = ReglasControlador(ReglasModelo())

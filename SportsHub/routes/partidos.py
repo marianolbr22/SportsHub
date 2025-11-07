@@ -7,6 +7,7 @@ from modelos.partido_modelo import PartidoModelo
 from controladores.partido_controlador import PartidoControlador
 from typing import Dict, List
 
+
 from modelos.reglas_modelo import ReglasModelo
 
 router = APIRouter()
@@ -69,6 +70,7 @@ async def actualizar_resultado(request: ResultadoRequest):
     if not ok:
         raise HTTPException(status_code=400, detail="No se pudo actualizar el resultado")
     return {"detalle": "Resultado actualizado correctamente"}
+
 
 # --------- Actualizar eventos/faltas ---------
 @router.post("/partidos/actualizar_eventos")
