@@ -10,6 +10,7 @@ from modelos.liga_modelo import LigaModelo
 from controladores.equipo_controlador import EquipoControlador
 from controladores.liga_controlador import LigaControlador
 from modelos.usuario_modelo import UsuarioModelo
+from aspectos.logging import log_action  # <--- IMPORTAR DECORADOR
 
 router = APIRouter()
 equipo_controlador = EquipoControlador(EquipoModelo())
@@ -54,6 +55,7 @@ class EliminarJugadorRequest(BaseModel):
 
 # --------- Crear equipo y asociar a liga ---------
 @router.post("/equipos/registrar_en_liga")
+@log_action(action_name="REGISTRAR_EQUIPO_EN_LIGA")
 async def registrar_equipo_en_liga(request: CrearEquipoEnLigaRequest):
     id_equipo = await equipo_controlador.crear_equipo(request.equipo)
     ok = await liga_controlador.agregar_equipo(request.id_liga, id_equipo)
@@ -79,6 +81,7 @@ async def get_equipo(id: str):
 
 # --------- Eliminar equipo ---------
 @router.delete("/equipos/{id}")
+@log_action(action_name="ELIMINAR_EQUIPO")
 async def eliminar_equipo(id: str):
     # Aquí puedes decidir si también lo quitas de la liga (extra)
     ok = await equipo_controlador.eliminar_equipo(id)
@@ -88,6 +91,7 @@ async def eliminar_equipo(id: str):
 
 # --------- Actualizar director ---------
 @router.post("/equipos/actualizar_director")
+@log_action(action_name="ACTUALIZAR_DIRECTOR_EQUIPO")
 async def actualizar_director(request: ActualizarDirectorRequest):
     ok = await equipo_controlador.asignar_director(request.id_equipo, request.id_director)
     if not ok:
@@ -96,6 +100,7 @@ async def actualizar_director(request: ActualizarDirectorRequest):
 
 # --------- Actualizar posición ---------
 @router.post("/equipos/actualizar_posicion")
+@log_action(action_name="ACTUALIZAR_POSICION_EQUIPO")
 async def actualizar_posicion(request: ActualizarPosicionRequest):
     ok = await equipo_controlador.actualizar_posicion(request.id_equipo, request.nueva_posicion)
     if not ok:
@@ -104,6 +109,7 @@ async def actualizar_posicion(request: ActualizarPosicionRequest):
 
 # --------- Actualizar estadísticas ---------
 @router.post("/equipos/actualizar_estadisticas")
+@log_action(action_name="ACTUALIZAR_ESTADISTICAS_EQUIPO")
 async def actualizar_estadisticas(request: ActualizarEstadisticasRequest):
     ok = await equipo_controlador.actualizar_estadisticas(
         request.id_equipo, request.ganados, request.perdidos, request.empatados, request.puntos
@@ -120,6 +126,7 @@ async def listar_equipos():
 
 # --------- Agregar jugador a equipo ---------
 @router.post("/equipos/agregar_jugador")
+@log_action(action_name="AGREGAR_JUGADOR_EQUIPO")
 async def agregar_jugador(request: AgregarJugadorRequest):
     ok = await jugador_controlador.agregar_jugador(request.id_equipo, request.jugador)
     if not ok:
@@ -128,6 +135,7 @@ async def agregar_jugador(request: AgregarJugadorRequest):
 
 # --------- Eliminar jugador de equipo ---------
 @router.post("/equipos/eliminar_jugador")
+@log_action(action_name="ELIMINAR_JUGADOR_EQUIPO")
 async def eliminar_jugador(request: EliminarJugadorRequest):
     ok = await jugador_controlador.eliminar_jugador(request.id_equipo, request.numero)
     if not ok:
@@ -143,6 +151,7 @@ async def get_equipo_por_director(id_director: str):
     return equipo
 
 @router.delete("/equipos/{id}/completo")
+@log_action(action_name="ELIMINAR_EQUIPO_COMPLETO")
 async def eliminar_equipo_completo(id: str):
     ok = await eliminacion_equipo_facade.eliminar_equipo_completo(id)
     if not ok:

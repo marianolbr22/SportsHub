@@ -13,6 +13,7 @@ from controladores.arbitro_controlador import ArbitroControlador
 from modelos.partido_modelo import PartidoModelo
 from modelos.usuario_modelo import UsuarioModelo
 from routes.equipo import equipo_controlador
+from aspectos.logging import log_action  # <--- IMPORTAR DECORADOR
 
 router = APIRouter()
 liga_controlador = LigaControlador(LigaModelo())
@@ -53,6 +54,7 @@ class CrearArbitroEnLigaRequest(BaseModel):
 
 # --------- Crear liga ---------
 @router.post("/ligas")
+@log_action(action_name="CREAR_LIGA")
 async def crear_liga(liga: Liga):
     id_nueva = await liga_controlador.crear_liga(liga)
     return {"id": id_nueva}
@@ -67,6 +69,7 @@ async def get_liga(id: str):
 
 # --------- Eliminar liga ---------
 @router.delete("/ligas/{id}")
+@log_action(action_name="ELIMINAR_LIGA")
 async def eliminar_liga(id: str):
     ok = await liga_controlador.eliminar_liga(id)
     if not ok:
@@ -75,6 +78,7 @@ async def eliminar_liga(id: str):
 
 # --------- Agregar/eliminar árbitro ---------
 @router.post("/ligas/agregar_arbitro")
+@log_action(action_name="LIGA_AGREGAR_ARBITRO")
 async def agregar_arbitro(req: IdRequest):
     ok = await liga_controlador.agregar_arbitro(req.id_liga, req.id_item)
     if not ok:
@@ -82,6 +86,7 @@ async def agregar_arbitro(req: IdRequest):
     return {"detalle": "Árbitro agregado correctamente"}
 
 @router.post("/ligas/eliminar_arbitro")
+@log_action(action_name="LIGA_ELIMINAR_ARBITRO")
 async def eliminar_arbitro(req: IdRequest):
     ok = await liga_controlador.eliminar_arbitro(req.id_liga, req.id_item)
     if not ok:
@@ -90,6 +95,7 @@ async def eliminar_arbitro(req: IdRequest):
 
 # --------- Crear arbitro y asignar a liga ---------
 @router.post("/ligas/registrar_arbitro_en_liga")
+@log_action(action_name="REGISTRAR_ARBITRO_EN_LIGA")
 async def registrar_arbitro_en_liga(request: CrearArbitroEnLigaRequest):
     try:
         id_arbitro = await registro_liga_facade.registrar_arbitro_en_liga(request.arbitro, request.id_liga)
@@ -99,6 +105,7 @@ async def registrar_arbitro_en_liga(request: CrearArbitroEnLigaRequest):
 
 # --------- Agregar/eliminar director ---------
 @router.post("/ligas/agregar_director")
+@log_action(action_name="LIGA_AGREGAR_DIRECTOR")
 async def agregar_director(req: IdRequest):
     ok = await liga_controlador.agregar_director(req.id_liga, req.id_item)
     if not ok:
@@ -106,6 +113,7 @@ async def agregar_director(req: IdRequest):
     return {"detalle": "Director agregado correctamente"}
 
 @router.post("/ligas/eliminar_director")
+@log_action(action_name="LIGA_ELIMINAR_DIRECTOR")
 async def eliminar_director(req: IdRequest):
     ok = await liga_controlador.eliminar_director(req.id_liga, req.id_item)
     if not ok:
@@ -114,6 +122,7 @@ async def eliminar_director(req: IdRequest):
 
 # --------- Crear director y asignar a liga ---------
 @router.post("/ligas/registrar_director_en_liga")
+@log_action(action_name="REGISTRAR_DIRECTOR_EN_LIGA")
 async def registrar_director_en_liga(request: CrearDirectorEnLigaRequest):
     try:
         id_director = await registro_liga_facade.registrar_director_en_liga(request.director, request.id_liga)
@@ -123,6 +132,7 @@ async def registrar_director_en_liga(request: CrearDirectorEnLigaRequest):
 
 # --------- Agregar/eliminar partido ---------
 @router.post("/ligas/agregar_partido")
+@log_action(action_name="LIGA_AGREGAR_PARTIDO")
 async def agregar_partido(req: IdRequest):
     ok = await liga_controlador.agregar_partido(req.id_liga, req.id_item)
     if not ok:
@@ -130,6 +140,7 @@ async def agregar_partido(req: IdRequest):
     return {"detalle": "Partido agregado correctamente"}
 
 @router.post("/ligas/eliminar_partido")
+@log_action(action_name="LIGA_ELIMINAR_PARTIDO")
 async def eliminar_partido(req: IdRequest):
     ok = await liga_controlador.eliminar_partido(req.id_liga, req.id_item)
     if not ok:
@@ -138,6 +149,7 @@ async def eliminar_partido(req: IdRequest):
 
 # --------- Actualizar fase ---------
 @router.post("/ligas/actualizar_fase")
+@log_action(action_name="LIGA_ACTUALIZAR_FASE")
 async def actualizar_fase(req: FaseRequest):
     ok = await liga_controlador.actualizar_fase(req.id_liga, req.nueva_fase)
     if not ok:
@@ -146,6 +158,7 @@ async def actualizar_fase(req: FaseRequest):
 
 # --------- Agregar/eliminar equipo ---------
 @router.post("/ligas/agregar_equipo")
+@log_action(action_name="LIGA_AGREGAR_EQUIPO")
 async def agregar_equipo(req: IdRequest):
     ok = await liga_controlador.agregar_equipo(req.id_liga, req.id_item)
     if not ok:
@@ -153,6 +166,7 @@ async def agregar_equipo(req: IdRequest):
     return {"detalle": "Equipo agregado correctamente"}
 
 @router.post("/ligas/eliminar_equipo")
+@log_action(action_name="LIGA_ELIMINAR_EQUIPO")
 async def eliminar_equipo(req: IdRequest):
     ok = await liga_controlador.eliminar_equipo(req.id_liga, req.id_item)
     if not ok:
@@ -167,6 +181,7 @@ async def listar_ligas():
 
 #---------- Eliminar liga completa ---------
 @router.delete("/ligas/{id}/completa")
+@log_action(action_name="ELIMINAR_LIGA_COMPLETA")
 async def eliminar_liga_completa(id: str):
     ok = await eliminacion_liga_facade.eliminar_liga_completa(id)
     if not ok:
