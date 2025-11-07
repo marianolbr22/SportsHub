@@ -5,6 +5,8 @@ from routes.ligas import router as ligas_router
 from routes.reglas import router as reglas_router
 from routes.partidos import router as partidos_router
 from routes.equipo import router as equipo_router
+from routes.notifications import router as notifications_router
+
 
 app = FastAPI(
     title="SportsHub API",
@@ -27,6 +29,8 @@ app.include_router(ligas_router, prefix="")
 app.include_router(reglas_router, prefix="")
 app.include_router(equipo_router, prefix="")
 app.include_router(partidos_router, prefix="")
+app.include_router(notifications_router, prefix="")
+
 
 # Si después tienes más routers, inclúyelos aquí:
 # from routes.equipos import router as equipos_router
@@ -35,4 +39,4 @@ app.include_router(partidos_router, prefix="")
 # Endpoint raíz opcional
 @app.get("/")
 def root():
-    return {"mensaje": "API de SportsHub activa, revisado uno"}
+    return {"mensaje": "API de SportsHub activa"}
